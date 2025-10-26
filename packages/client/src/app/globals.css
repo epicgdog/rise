@@ -19,3 +19,50 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* MUD UI specific styles (scoped under .mud-root) */
+.mud-root {
+  background: #000000; /* pure black */
+  color: #00ff00; /* bright green */
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Segoe UI Mono', monospace;
+}
+
+/* subtle neon text glow for hover/active states */
+.text-shadow-green-glow {
+  text-shadow: 0 0 6px rgba(0, 255, 0, 0.9), 0 0 12px rgba(0, 255, 0, 0.6);
+}
+
+/* orange glow for title */
+.text-shadow-orange-glow {
+  text-shadow: 0 0 8px rgba(255, 140, 0, 1), 0 0 16px rgba(255, 140, 0, 0.8), 0 0 24px rgba(255, 140, 0, 0.5);
+}
+
+/* hover-friendly glow utility */
+.glow-hover:hover {
+  filter: drop-shadow(0 0 6px rgba(0,255,0,0.9));
+}
+
+/* blinking cursor animation */
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.blink-cursor {
+  animation: blink 1s step-start infinite;
+}
+
+/* ASCII-like border styling for boxed sections */
+.mud-box {
+  border: 1px solid #00ff00;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+}
+
+/* make sure code/pre blocks look terminal-ish */
+.mud-pre {
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  white-space: pre-wrap;
+}
