@@ -1,20 +1,28 @@
 import { defineConfig } from '@0xobelisk/sui-common';
-
+ 
 export const dubheConfig = defineConfig({
-  name: 'counter',
-  description: 'counter contract',
+  name: 'rise',
+  description: 'mud game on the blockchain',
+  enums: {},
   components: {
-    counter0: {},
-    counter1: 'u32'
-  },
-  resources: {
-    counter2: {
+
+    player: {},
+    landmark: {},
+    monster: {},   // arrays
+    health: 'u32', // key value
+    experience: 'u32',
+    level: 'u32',
+    name: 'string',
+    description: 'string',
+
+    position : {
       fields: {
-        value: 'u32'
+        x : 'u32',
+        y: 'u32'
       }
     }
+
   },
-  errors: {
-    invalid_increment: "Number can't be incremented, must be more than 0"
-  }
+  resources: {},
+  errors: {}
 });
