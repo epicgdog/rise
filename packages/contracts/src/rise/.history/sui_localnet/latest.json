@@ -1,0 +1,27 @@
+{
+  "projectName": "rise",
+  "network": "localnet",
+  "startCheckpoint": "144",
+  "packageId": "0x0c497277e719a85e6e9257ed91623ebf716f03c6ac874569c882613d0f7202df",
+  "dappHub": "",
+  "upgradeCap": "0xa640d093adf336aef1c248fe1aae42b5c729a3902d07c482f2cc9ae99b3be244",
+  "version": 1,
+  "components": {
+    "player": {},
+    "landmark": {},
+    "monster": {},
+    "health": "u32",
+    "experience": "u32",
+    "level": "u32",
+    "name": "string",
+    "description": "string",
+    "position": {
+      "fields": {
+        "x": "u32",
+        "y": "u32"
+      }
+    }
+  },
+  "resources": {},
+  "enums": {}
+}

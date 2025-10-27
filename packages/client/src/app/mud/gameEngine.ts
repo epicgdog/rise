@@ -1,4 +1,5 @@
 // Game engine for Rise - Post-apocalyptic MUD
+import { Transaction, TransactionResult } from '@0xobelisk/sui-client';
 
 export type Location = {
   id: string;
@@ -6,6 +7,7 @@ export type Location = {
   description: string;
   exits: { [direction: string]: string };
   landmarks: string[];
+  coords?: { x: number; y: number }; // Optional - coordinates managed by blockchainGameEngine
 };
 
 export type Item = {
@@ -22,6 +24,7 @@ export type GameState = {
   hunger: number;
   thirst: number;
   outputHistory: OutputLine[];
+  playerAddress?: string;
 };
 
 export type OutputLine = {
@@ -29,7 +32,7 @@ export type OutputLine = {
   type: 'normal' | 'highlight' | 'warning' | 'error' | 'success';
 };
 
-// World map - post-apocalyptic wasteland
+// World map - post-apocalyptic wasteland with blockchain coordinates
 export const LOCATIONS: { [key: string]: Location } = {
   wasteland_start: {
     id: 'wasteland_start',
@@ -45,7 +48,8 @@ You clutch a tattered map in your hand—your only guide in this dead world. You
       s: 'dry_riverbed',
       w: 'ash_plains'
     },
-    landmarks: ['cracked earth', 'skeletal road (north)', 'rusted structure (east)', 'dried riverbed (south)', 'ash plains (west)']
+    landmarks: ['cracked earth', 'skeletal road (north)', 'rusted structure (east)', 'dried riverbed (south)', 'ash plains (west)'],
+    coords: { x: 0, y: 0 }
   },
   old_road: {
     id: 'old_road',

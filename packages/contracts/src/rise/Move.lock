@@ -2,7 +2,7 @@
 
 [move]
 version = 3
-manifest_digest = "E95083536E436FDCA9187CE863057756377E5FC1F51D3169C1F962CEB9C7306B"
+manifest_digest = "FDDE635AB47A4355BDE25DEFDBFFB5631A04ED21A857E16BE126A6B327395464"
 deps_digest = "3C4103934B1E040BB6B23F1D610B4EF9F2F1166A50A104EADCF77467C004C600"
 dependencies = [
   { id = "Dubhe", name = "Dubhe" },
@@ -11,7 +11,7 @@ dependencies = [
 
 [[move.package]]
 id = "Dubhe"
-source = { git = "https://github.com/0xobelisk/dubhe.git", rev = "v1.2.0-pre.77", subdir = "framework/src/dubhe" }
+source = { local = "../dubhe" }
 
 dependencies = [
   { id = "Sui", name = "Sui" },
@@ -28,3 +28,9 @@ source = { git = "https://github.com/MystenLabs/sui.git", rev = "mainnet-v1.46.3
 dependencies = [
   { id = "MoveStdlib", name = "MoveStdlib" },
 ]
+
+[env.localnet]
+chain-id = "4dfca4c2"
+original-published-id = "0x0c497277e719a85e6e9257ed91623ebf716f03c6ac874569c882613d0f7202df"
+latest-published-id = "0x0c497277e719a85e6e9257ed91623ebf716f03c6ac874569c882613d0f7202df"
+published-version = "1"

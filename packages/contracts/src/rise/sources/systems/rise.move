@@ -136,6 +136,7 @@ module rise::main_system {
 
     /// Move player to a new position
     /// This records each movement command on the blockchain
+    /// After moving, the client should query get_player_location to get the new description
     public entry fun move_player(
         dapp_hub: &mut DappHub,
         new_x: u32,
@@ -150,6 +151,24 @@ module rise::main_system {
         // Update player position
         position::set(dapp_hub, player_address, new_x, new_y);
     }
+    
+    /// Check if there's a monster at the player's current location
+    /// Returns true if player is at the same position as a monster
+    public fun check_monster_at_location(
+        dapp_hub: &DappHub,
+        player_address: address
+    ): bool {
+        let (player_x, player_y) = position::get(dapp_hub, player_address);
+        
+        // Check if monster exists at this location
+        let monster_address = @0x999;
+        if (monster::has(dapp_hub, monster_address)) {
+            let (monster_x, monster_y) = position::get(dapp_hub, monster_address);
+            player_x == monster_x && player_y == monster_y
+        } else {
+            false
+        }
+    }
 
     /// Get player's current position
     public fun get_player_position(
@@ -157,6 +176,66 @@ module rise::main_system {
         player_address: address
     ): (u32, u32) {
         position::get(dapp_hub, player_address)
+    }
+
+    /// Get player's current location name and description based on their position
+    /// Returns the landmark name and description for the player's current coordinates
+    public fun get_player_location(
+        dapp_hub: &DappHub,
+        player_address: address
+    ): (String, String) {
+        let (x, y) = position::get(dapp_hub, player_address);
+        
+        // Match coordinates to landmarks
+        if (x == 0 && y == 0) {
+            // Landmark 1: Wasteland Start
+            (
+                string(b"The Wasteland - Ground Zero"),
+                string(b"You stand in the middle of an endless expanse of cracked earth and ash. The sky above is a sickly gray, thick with dust that blots out any hint of sun. The air tastes metallic, bitter. There are no trees, no grass, no sign of life—just endless desolation stretching in every direction.")
+            )
+        } else if (x == 0 && y == 5) {
+            // Landmark 2: Old Road
+            (
+                string(b"The Old Road"),
+                string(b"What remains of an ancient highway stretches before you—buckled asphalt riddled with deep cracks, weeds long dead and fossilized in the fissures. Rusted car husks sit abandoned, their windows shattered, their frames stripped bare by time and scavengers. The silence here is oppressive; even the wind seems reluctant to disturb this graveyard of the old world.")
+            )
+        } else if (x == 10 && y == 0) {
+            // Landmark 3: Rusted Tower
+            (
+                string(b"The Rusted Tower"),
+                string(b"A skeletal radio tower looms above you, its metal frame corroded and twisted. It leans precariously, as if one strong gust could topple it entirely. At its base, scattered debris—broken glass, twisted metal, scraps of unidentifiable cloth—litters the ground. The tower groans softly in the wind, a mournful sound.")
+            )
+        } else if (x == 0 && y == 10) {
+            // Landmark 4: Dry Riverbed
+            (
+                string(b"The Dry Riverbed"),
+                string(b"You stand in what was once a river, now a cracked channel of sun-baked mud and jagged stones. The bed is littered with the detritus of a lost civilization: rusted shopping carts, waterlogged books turned to pulp and dust, plastic bottles bleached white by the harsh sun. Occasionally, you see the faint outline of old bridges in the distance, their spans long collapsed.")
+            )
+        } else if (x == 5 && y == 0) {
+            // Landmark 5: Ash Plains
+            (
+                string(b"The Ash Plains"),
+                string(b"An endless plain of fine ash stretches before you, disturbed only by your footprints. Each step sends up tiny clouds of gray dust that hang in the still air. The silence here is absolute—no wind, no sound, just the soft crunch of ash beneath your feet. The monotony of this place is suffocating.")
+            )
+        } else if (x == 10 && y == 15) {
+            // Landmark 6: Rocky Outcrop
+            (
+                string(b"Rocky Outcrop"),
+                string(b"You've climbed to a rocky outcrop overlooking the wasteland. From here, the devastation is laid bare—kilometer after kilometer of dead land stretching to the horizon. The view is both terrible and humbling. A small cave entrance yawns in the rock face nearby. The Wasteland Prowler lurks here.")
+            )
+        } else if (x == 10 && y == 20) {
+            // Landmark 7: Cave Entrance
+            (
+                string(b"Cave Entrance"),
+                string(b"A dark cave opens before you, offering shelter from the harsh wasteland. The darkness within is absolute—entering without light would be foolish. The cave mouth provides some protection from the elements, and you can hear the faint drip of water echoing from deep within.")
+            )
+        } else {
+            // Unknown location - generic wasteland description
+            (
+                string(b"The Wasteland"),
+                string(b"You wander through barren, lifeless terrain. Cracked earth stretches in all directions, broken only by scattered debris and the occasional twisted remnant of the world that was. The gray sky presses down like a weight, and you are utterly alone.")
+            )
+        }
     }
 
     /// Get player's stats
@@ -168,6 +247,54 @@ module rise::main_system {
         let exp = experience::get(dapp_hub, player_address);
         let lvl = level::get(dapp_hub, player_address);
         (hp, exp, lvl)
+    }
+    
+    /// Get nearby landmarks based on player position
+    /// Returns a list of visible landmarks from the current location
+    public fun get_nearby_landmarks(
+        dapp_hub: &DappHub,
+        player_address: address
+    ): vector<String> {
+        let (x, y) = position::get(dapp_hub, player_address);
+        let mut landmarks = vector::empty<String>();
+        
+        // Based on current position, add nearby landmarks
+        if (x == 0 && y == 0) {
+            // From Wasteland Start, you can see:
+            landmarks.push_back(string(b"Old Road (north)"));
+            landmarks.push_back(string(b"Rusted Tower (east)"));
+            landmarks.push_back(string(b"Dry Riverbed (south)"));
+            landmarks.push_back(string(b"Ash Plains (west)"));
+        } else if (x == 0 && y == 5) {
+            // From Old Road
+            landmarks.push_back(string(b"Wasteland Start (south)"));
+            landmarks.push_back(string(b"Highway continues east and west"));
+        } else if (x == 10 && y == 0) {
+            // From Rusted Tower
+            landmarks.push_back(string(b"Wasteland Start (west)"));
+            landmarks.push_back(string(b"Rocky Outcrop (north)"));
+        } else if (x == 0 && y == 10) {
+            // From Dry Riverbed
+            landmarks.push_back(string(b"Wasteland Start (north)"));
+            landmarks.push_back(string(b"Riverbed continues east and west"));
+        } else if (x == 5 && y == 0) {
+            // From Ash Plains
+            landmarks.push_back(string(b"Wasteland Start (east)"));
+            landmarks.push_back(string(b"Ash dunes (west)"));
+        } else if (x == 10 && y == 15) {
+            // From Rocky Outcrop
+            landmarks.push_back(string(b"Rusted Tower (south)"));
+            landmarks.push_back(string(b"Cave Entrance (north)"));
+            landmarks.push_back(string(b"DANGER: Wasteland Prowler nearby!"));
+        } else if (x == 10 && y == 20) {
+            // From Cave Entrance
+            landmarks.push_back(string(b"Rocky Outcrop (south)"));
+            landmarks.push_back(string(b"Dark cave interior"));
+        } else {
+            landmarks.push_back(string(b"Endless wasteland in all directions"));
+        };
+        
+        landmarks
     }
 
     /// Update player health (for taking damage or healing)
